@@ -12,7 +12,6 @@ unset GIT_DIR
 
 # config
 STUNNEL_VERSION="5.10"
-STUNNEL_URL=https://github.com/jtatum/heroku-buildpack-stunnel/releases/download/binary/stunnel-5.10-cedar14.tar.gz
 
 # parse and derive params
 BUILD_DIR=$1
@@ -38,7 +37,7 @@ VENDORED_STUNNEL="vendor/stunnel"
 PATH="$BUILD_DIR/$VENDORED_STUNNEL/bin:$PATH"
 echo "-----> Fetching and vendoring stunnel into slug"
 mkdir -p "$BUILD_DIR/$VENDORED_STUNNEL"
-curl $STUNNEL_URL -s -o - | tar xzf - -C "$BUILD_DIR/$VENDORED_STUNNEL"
+tar xzf "$BUILDPACK_DIR/binary/stunnel-$STUNNEL_VERSION-cedar14.tar.gz" -C "$BUILD_DIR/$VENDORED_STUNNEL"
 
 echo "-----> Moving the configuration generation script into app/bin"
 mkdir -p $BUILD_DIR/bin

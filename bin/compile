@@ -12,7 +12,7 @@ unset GIT_DIR
 
 # config
 STUNNEL_VERSION="5.10"
-STUNNEL_URL=https://github.com/jtatum/heroku-buildpack-stunnel/releases/download/untagged-1b9392101e296adb88c1/stunnel-5.10-cedar14.tar.gz
+STUNNEL_URL=https://github.com/jtatum/heroku-buildpack-stunnel/releases/download/binary/stunnel-5.10-cedar14.tar.gz
 
 # parse and derive params
 BUILD_DIR=$1

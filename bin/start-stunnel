@@ -2,17 +2,12 @@
 # Adapted from https://github.com/ryandotsmith/nginx-buildpack/
 
 main() {
-  if ! is-enabled "${PGBOUNCER_ENABLED:-1}"; then
-    at pgbouncer-disabled
-    exec "$@"
-  fi
-
-  at pgbouncer-enabled
-  run-pgbouncer "$@"
+  at stunnel-enabled
+  run-stunnel "$@"
 }
 
-run-pgbouncer() {
-  declare psmgr=/tmp/pgbouncer-buildpack-wait
+run-stunnel() {
+  declare psmgr=/tmp/stunnel-buildpack-wait
   declare -A pids signals
 
   config-gen
@@ -22,8 +17,7 @@ run-pgbouncer() {
   mkfifo "$psmgr"
 
   # Start processes.
-  aux-start stunnel SIGINT vendor/stunnel/bin/stunnel vendor/stunnel/stunnel-pgbouncer.conf
-  aux-start pgbouncer SIGINT vendor/pgbouncer/bin/pgbouncer vendor/pgbouncer/pgbouncer.ini
+  aux-start stunnel SIGINT vendor/stunnel/bin/stunnel vendor/stunnel/stunnel.conf
   app-start SIGTERM "$@"
   pid=$!
 
@@ -66,16 +60,8 @@ run-pgbouncer() {
 config-gen() {
   # Generate config files
   at config-gen-start
-  source bin/gen-pgbouncer-conf.sh
+  source bin/gen-stunnel-conf.sh
   at config-gen-end
-
-  # Overwrite config vars with pgbouncer targets
-  POSTGRES_URLS=${PGBOUNCER_URLS:-DATABASE_URL}
-
-  for POSTGRES_URL in $POSTGRES_URLS; do
-    at "config-gen-override $POSTGRES_URL"
-    eval "$POSTGRES_URL=\$${POSTGRES_URL}_PGBOUNCER"
-  done
 }
 
 aux-start() {
@@ -144,7 +130,7 @@ app-start() {
 }
 
 at() {
-  echo "buildpack=pgbouncer at=$*"
+  echo "buildpack=stunnel at=$*"
 }
 
 is-enabled() {
